@@ -1,0 +1,28 @@
+
+---
+- hosts: all
+  user: root
+  vars:
+    mysql_host_address: < MYSQL DB ADDR >
+    mysql_user_name: < RUNDECK USER NAME >
+    mysql_user_password: < RUNDECK USER PASSWORD >
+  tasks:
+    - name: install java
+      yum: name=java-1.8.0 state=present
+    
+    - name: install rundeck repository
+      yum: name=http://repo.rundeck.org/latest.rpm state=present
+
+    - name: install rundeck
+      yum: name=rundeck state=present
+    
+    - name: install slack-incoming-webhook-plugin
+      get_url:
+        url: https://github.com/higanworks/rundeck-slack-incoming-webhook-plugin/releases/download/v0.6.dev/rundeck-slack-incoming-webhook-plugin-0.6.jar
+        dest: /var/lib/rundeck/libext/rundeck-slack-incoming-webhook-plugin-0.6.jar
+
+    - name: copy rundeck-config.properties
+      template: src=rundeck-config.properties dest=/etc/rundeck/ owner=root group=root mode=644
+
+    - name: start rundeck
+      service: name=rundeckd state=restarted

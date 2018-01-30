@@ -1,0 +1,7 @@
+version : '2'
+
+services:
+  rundeck:
+    image: centos:7
+    tty: True
+
